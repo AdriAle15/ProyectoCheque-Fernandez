@@ -19,6 +19,12 @@ namespace ProyectoCheque
 
         private void btnProcesar_Click(object sender, EventArgs e)
         {
+                if(this.txtNombre.TextLength == 0)
+            {
+                MessageBox.Show("Por favor ingrese un nombre");
+                this.txtNombre.Focus();
+                return;
+            }
             if(this.txtCantidad.TextLength== 0)
             {
                 MessageBox.Show("Por favor ingrese una cantidad");
@@ -28,15 +34,21 @@ namespace ProyectoCheque
             }
             //act para el estudiante: validar que txtCantidad tenga valores númericos con tryParse
             //validar que el nombre esté ingresado de manera obligatoria
+
             int num= Int32.Parse(this.txtCantidad.Text);
-            string res = Utilidades.getCentenas(num);
-            this.txtResultado.Text = res;
+            string res = Utilidades.obtenerNombre(num);
+            txtResultado.Text = res;
 
         }
 
         private void btnSalir_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void txtNombre_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

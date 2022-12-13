@@ -8,64 +8,101 @@ namespace ProyectoCheque
 {
     internal class Utilidades
     {
-        private static string[] unidades = {"cero","uno","dos","tres","cuatro", "cinco", "seis", "siete", "ocho"
+        private static string[] nombres_0_19 = {"","uno","dos","tres","cuatro", "cinco", "seis", "siete", "ocho"
           , "nueve", "diez","once","doce","trece","catorce", "quince", "dieciseis", "diecisiete", "dieciocho"
           , "diecinueve" };
 
-        private static string[] decenas = {"cero","diez","veinte","treinta","cuarenta", "cincuenta", "sesenta", "setenta", "ochenta"
+        // wtf porque esto es {} y no [] ah olvidalo estamos en C
+        private static string[] nombres_20_90 = {"","diez","veinte","treinta","cuarenta", "cincuenta", "sesenta", "setenta", "ochenta"
           , "noventa"};
         
-        private static string[] centenas = {"cero","cien","doscientos","trescientos","cuatrocientos", "quinientos", "seiscientos", "setecientos", "ochocientos"
+        private static string[] nombres_100_900 = {"","ciento","doscientos","trescientos","cuatrocientos", "quinientos", "seiscientos", "setecientos", "ochocientos"
           , "novecientos"};
 
-        public static string getUnidades(int num)
+        // tiene que llegar a 9 999 999 no?
+        public static string obtener_nombre_0_19(int num)
         {
-            string aux = "";
-            aux = unidades[num];
-
-            return aux;
+            return nombres_0_19[num];
+        }
+        public static string obtener_nombre_20_99(int num)
+        {
+            string nombre = nombres_20_90[num / 10];
+            int unidad = num % 10;
+            if (unidad > 0)
+            {
+                string nombre_unidad = obtener_nombre_0_19(unidad);
+                string buffer = nombre == "" ? string.Format("{0}", nombre_unidad) : string.Format("{0} y {1}", nombre, nombre_unidad);
+                nombre = string.Copy(buffer);
+            }
+            return nombre;
         }
 
-        public static string getDecenas(int num)
+        public static string obtener_nombre_100_999(int num)
         {
-            string aux = "";
-            int x = num / 10;
-            int resto = num % 10;
+            string nombre = nombres_100_900[num / 100];
+            int resto = num % 100;
+            if(resto > 0)
+            {
+                string nombre_resto = obtener_nombre_20_99(resto);
+                string buffer = string.Format("{0} {1}", nombre, nombre_resto);
+                nombre = string.Copy(buffer);
+            }
+            return nombre;
+        }
 
-            if (num < 20)
-                aux = getUnidades(num);
+        public static string obtener_nombre_1000_999999(int num)
+        {
+            int miles = num / 1000;
+            string nombre_miles = obtener_nombre_100_999(miles);
+            string buffer = string.Format("{0} mil", nombre_miles);
+            string nombre = string.Copy(buffer);
+            int resto = num % 1000;
+            if (resto > 0)
+            {
+                string nombre_resto = obtener_nombre_100_999(resto);
+                buffer = string.Format("{0} {1}", nombre, nombre_resto);
+                nombre = string.Copy(buffer);
+            }
+            return nombre;
+        }
+
+        public static string obtener_nombre_1000000_9999999(int num)
+        {
+            int millones = num / 1000000;
+            string nombre_millones = obtener_nombre_100_999(millones); 
+            string buffer = string.Format(millones == 1 ? "un millón" : "{0} millones", nombre_millones);
+            string nombre = string.Copy(buffer);
+            int resto = num % 1000000;
+            if(resto > 0)
+            {
+                string nombre_resto = obtener_nombre_1000_999999(resto);
+                buffer = string.Format("{0} {1}", nombre, nombre_resto);
+                nombre = string.Copy(buffer);
+            }
+            return nombre;
+        }
+
+        public static string obtenerNombre(int num)
+        {
+            if(num < 20)
+            {
+                return obtener_nombre_0_19(num);
+            }else if(num < 100)
+            {
+                return obtener_nombre_20_99(num);
+            }else if( num < 1000)
+            {
+                return obtener_nombre_100_999(num);
+            }else if( num < 1000000)
+            {
+                return obtener_nombre_1000_999999(num);
+            }
             else
             {
-                string uni = resto == 0 ? "" : "y" + getUnidades(resto);
-                aux = decenas[x]+uni;
+                return obtener_nombre_1000000_9999999(num);
             }
-
-            return aux;
         }
 
-        public static string getCentenas(int num)
-        {
-            string aux = "";
-            int x = num / 100;
-            int resto = num % 10;
-            int resto1 = resto % 10;
-
-            if (num < 20)
-            {
-                aux = getUnidades(num);
-            }
-            else if (num <= 90)
-            {
-                string uni = resto == 0 ? "" : " y " + getUnidades(resto);
-                aux = decenas[x] + uni;
-                //aux = getDecenas(num);
-            }
-            else
-            {
-                aux = centenas[x];
-            }
-
-            return aux;
-        }
+      
     }
 }
